@@ -79,3 +79,14 @@ void PORTPB6_Init(void) {
 	GPIO_PORTB_AFSEL_R &= ~0x40;
 	GPIO_PORTB_AMSEL_R &= ~0x40;
 }
+
+// Output PB7 for servo
+void PORTPB7_Init(void) {
+	SYSCTL_RCGCGPIO_R |= 0x02;
+	while ((SYSCTL_RCGCGPIO_R & 0x02) == 0);
+	
+	GPIO_PORTB_DIR_R |= 0x80;
+	GPIO_PORTB_DEN_R |= 0x80;
+	GPIO_PORTB_AFSEL_R &= ~0x80;
+	GPIO_PORTB_AMSEL_R &= ~0x80;
+}
