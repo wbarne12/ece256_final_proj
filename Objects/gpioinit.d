@@ -1,1 +1,1 @@
-./objects/gpioinit.o: GPIOinit.c inc\tm4c123gh6pm.h
+./objects/gpioinit.o: GPIOinit.c inc\tm4c123gh6pm.h GPIOinit.h

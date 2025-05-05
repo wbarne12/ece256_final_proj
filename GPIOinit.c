@@ -1,71 +1,70 @@
 #include "inc/tm4c123gh6pm.h"
+#include "GPIOinit.h"
 #include <stdbool.h>
 #include <stdint.h>
 
 // Inits for input from the joystick
-void ADC0_Init(void) {  
-	SYSCTL_RCGCGPIO_R |= 0x10;    // 1) activate clock for Port E and allow time to stabilize
-	while((SYSCTL_RCGCGPIO_R & 0x10)==0){}	
-	SYSCTL_RCGCADC_R |= 0x01;		  // 2) activate clock for ADC0 and allow time to stabilize
-	while ((SYSCTL_RCGCADC_R & 0x01)==0) {}
+// Make use of ADC0 and ADC1
+// ADC0 - PE4, ADC1 - PD2
+void ADC_Init(void) {
+	// Activate clock for Port E and D and allow time to stabilize
+	SYSCTL_RCGCGPIO_R |= 0x18;
+	while((SYSCTL_RCGCGPIO_R & 0x18)==0){}	
 		
-	GPIO_PORTE_AFSEL_R |= 0x0E;		// 3) Alt function on PE3, PE2, PE1
-	GPIO_PORTE_AMSEL_R |= 0x0E;   // 4) Analog mode for PE3, PE2, PE1
-	GPIO_PORTE_DEN_R &= 0x0E;     // 5) Disable digital IO for PE3-PE1
+	// PE4
+	GPIO_PORTE_DIR_R &= ~0x10;  // Make input
+	GPIO_PORTE_AFSEL_R |= 0x10; // Enable alternate function
+	GPIO_PORTE_DEN_R &= ~0x10;  // Disable digital I/O
+	GPIO_PORTE_AMSEL_R |= 0x10; // Enable analog functionality
+		
+	// PD2
+	GPIO_PORTD_DIR_R &= ~0x6;  // Make input
+	GPIO_PORTD_AFSEL_R |= 0x6; // Enable alternate function
+	GPIO_PORTD_DEN_R &= ~0x6;  // Disable digital I/O
+	GPIO_PORTD_AMSEL_R |= 0x6; // Enable analog functionality
+	  
+	// Activate ADC0 and ADC1 and allow time to stabilize
+	SYSCTL_RCGCADC_R |= 0x3;  
+	while((SYSCTL_RCGCADC_R & 0x3) == 0){}
 	
-	ADC0_PC_R = 0x5;							// 6) 500k samples a second	
+	// ADC0
+  ADC0_PC_R = 0x3;							// Configure for 250k samples/sec
+  ADC0_SSPRI_R = 0x0123;        // Sequencer 3 is highest priority
+  ADC0_ACTSS_R &= ~0x0008;      // Disable sample sequencer 3
+  ADC0_EMUX_R &= ~0xF000;       // Seq3 is software trigger
+	ADC0_SSMUX3_R = 9;            // Select channel 9 corresponding to PE4.
+  ADC0_SSCTL3_R = 0x06;         // Set IE0 and END0 (do NOT set TS0).
+  ADC0_ACTSS_R |= 0x0008;       // Enable sample sequencer 3 before we sample.
 		
-	// ADC0 SS3 (AIN0 - PE3)
-	ADC0_ACTSS_R &= ~0x08;        // Disable SS3 during setup
-	ADC0_EMUX_R &= ~0xF000;       // Seq3 is a software trigger
-	ADC0_SSMUX3_R = 0;            // AIN0
-	ADC0_SSCTL3_R = 0x06;    			// Set IE0 and EN0 (do not set TS0) HAHAHA it said TS lmao laughing
-	ADC0_ACTSS_R |= 0x08; 				// Enable SS3
-		
-	// ADC0 SS2 (AIN1 - PE2)
-	ADC0_ACTSS_R &= ~0x04;				// Disable SS2 during setup
-	ADC0_EMUX_R &= ~0x0F00;				// Seq2 is software trigger
-	ADC0_SSMUX2_R = 1;            // AIN1
-	ADC0_SSCTL2_R = 0x06;    			// Set IE0 and EN0 (do not set TS0)
-	ADC0_ACTSS_R |= 0x08;					// Enable SS2
-		
-	// ADC0 SS1 (AIN2 - PE1)
-	ADC0_ACTSS_R &= ~0x02;				// Disable SS1 during setup
-	ADC0_EMUX_R &= ~0x00F0; 			// Seq1 is software trigger
-	ADC0_SSMUX1_R = 2;            // AIN2
-	ADC0_SSCTL1_R = 0x06; 				// Set IE0 and EN0 (do not set TS0)
-	ADC0_ACTSS_R |= 0x02;         // Enable SS1 
+	// ADC1
+	ADC1_PC_R = 0x3;              // Configure for 250k samples/sec
+	ADC1_SSPRI_R = 0x0123;				// Sequencer 3 is highest priority
+	ADC1_ACTSS_R &= ~0x0008;			// Disable sample sequencer 3
+	ADC1_EMUX_R &= ~0xF000;				// Seq3 is software trigger
+	ADC1_SSMUX3_R = 5;						// Select channel 5 corresponding to PD2
+	ADC1_SSCTL3_R = 0x06;					// Set IE0 and END0
+	ADC1_ACTSS_R |= 0x0008;				// Enable sample sequencer 3 before samples.
 }
 
-uint32_t AIN0_In(void) {
-	uint32_t result;
+uint32_t ADC0_In(void){
+	uint32_t v=0;	
 	
-	ADC0_PSSI_R = 0x08;
-	while ((ADC0_RIS_R & 0x08) == 0) {}
-	result = ADC0_SSFIFO3_R & 0xFFF;
-	ADC0_ISC_R = 0x08;
+	ADC0_PSSI_R = 0x0008;            // 1) initiate SS3
+  while((ADC0_RIS_R&0x08)==0){};   // 2) wait for conversion done
+  v = ADC0_SSFIFO3_R&0xFFF;   		 // 3) read result
+  ADC0_ISC_R = 0x0008;             // 4) acknowledge completion
 		
-	return result;
-}
+	return v;
+} 
 
-uint32_t AIN1_In(void) {
-	uint32_t result;
+// Works in same way asd above function but with ADC1
+uint32_t ADC1_In(void) {
+	uint32_t v = 0;
 	
-	ADC0_PSSI_R = 0x04;
-	while ((ADC0_RIS_R & 0x04) == 0) {}
-	result = ADC0_SSFIFO2_R & 0xFFF;
-	ADC0_ISC_R = 0x04;
+	ADC1_PSSI_R = 0x0008;
+	while ((ADC1_RIS_R & 0x08) == 0) {}
+	v = ADC1_SSFIFO3_R & 0xFFF;
+	ADC1_ISC_R = 0x0008;
 		
-	return result;
-}
-
-uint32_t AIN2_In(void) {
-	uint32_t result;
-	
-	ADC0_PSSI_R = 0x02;
-	while ((ADC0_RIS_R & 0x02) == 0) {}
-	result = ADC0_SSFIFO1_R & 0xFFF;
-	ADC0_ISC_R = 0x02;
-		
-	return result;
+	return v;	
 }

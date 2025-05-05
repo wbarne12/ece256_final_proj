@@ -17,8 +17,8 @@
         <TargetCommonOption>
           <Device>ARMCM4</Device>
           <Vendor>ARM</Vendor>
-          <PackID>ARM.CMSIS.5.9.0</PackID>
-          <PackURL>http://www.keil.com/pack/</PackURL>
+          <PackID>ARM.Cortex_DFP.1.1.0</PackID>
+          <PackURL>https://www.keil.com/pack/</PackURL>
           <Cpu>IRAM(0x20000000,0x00020000) IROM(0x00000000,0x00040000) CPUTYPE("Cortex-M4") CLOCK(12000000) ESEL ELITTLE</Cpu>
           <FlashUtilSpec></FlashUtilSpec>
           <StartupFile></StartupFile>
@@ -134,7 +134,7 @@
             <UseExternalTool>0</UseExternalTool>
             <RunIndependent>0</RunIndependent>
             <UpdateFlashBeforeDebugging>1</UpdateFlashBeforeDebugging>
-            <Capability>0</Capability>
+            <Capability>1</Capability>
             <DriverSelection>4096</DriverSelection>
           </Flash1>
           <bUseTDR>1</bUseTDR>
@@ -396,19 +396,24 @@
               <FilePath>.\startup.s</FilePath>
             </File>
             <File>
+              <FileName>lab7.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\lab7.c</FilePath>
+            </File>
+            <File>
               <FileName>systick.c</FileName>
               <FileType>1</FileType>
               <FilePath>.\systick.c</FilePath>
             </File>
             <File>
+              <FileName>GPIOinit.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\GPIOinit.h</FilePath>
+            </File>
+            <File>
               <FileName>GPIOinit.c</FileName>
               <FileType>1</FileType>
               <FilePath>.\GPIOinit.c</FilePath>
-            </File>
-            <File>
-              <FileName>README.txt</FileName>
-              <FileType>5</FileType>
-              <FilePath>.\README.txt</FilePath>
             </File>
           </Files>
         </Group>
@@ -461,5 +466,14 @@
     <components/>
     <files/>
   </RTE>
+
+  <LayerInfo>
+    <Layers>
+      <Layer>
+        <LayName>Lab7</LayName>
+        <LayPrjMark>1</LayPrjMark>
+      </Layer>
+    </Layers>
+  </LayerInfo>
 
 </Project>
