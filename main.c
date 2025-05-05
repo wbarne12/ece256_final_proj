@@ -19,6 +19,7 @@ void InitConsole(void);
 void ADC_Init(void);
 void PORTPB6_Init(void);
 void servoDeg(int);
+void joystick_to_deg(int);
 void Delay_ms(uint32_t delay);
 uint32_t ADC0_In(void);
 uint32_t ADC1_In(void);
@@ -46,15 +47,27 @@ int main(void) {
 	UARTprintf("PB6 Init complete.\n");
 	
 	while (1) {
+		//UARTprintf("%d\n",ADC0_In());
 		for (int i = 0; i < 180; i++) {
 			servoDeg(i);
 		}
 		for (int i = 180; i > 0; i--) {
 			servoDeg(i);
 		}
+		//for(int i=0; i<200;i++) {
+			//joystick_to_deg(ADC0_In());
+		//}
 	} 
 }
 
+//takes in a value 0-4095 from the joystick and sets the servo to a corisponding angle
+void joystick_to_deg(int num) {
+		int deg = (180/4095)*num;
+	
+		servoDeg(deg);
+}
+
+//takes in an intiger degree angle and sets the servo to that angle
 void servoDeg(int deg) {
 			int i = (2000/180)*deg + 500;
 		
