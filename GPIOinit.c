@@ -90,3 +90,14 @@ void PORTPB7_Init(void) {
 	GPIO_PORTB_AFSEL_R &= ~0x80;
 	GPIO_PORTB_AMSEL_R &= ~0x80;
 }
+
+// Output PD0 for servo 0x08 0x01
+void PORTPD0_Init(void) {
+		SYSCTL_RCGCGPIO_R |= 0x02;
+	while ((SYSCTL_RCGCGPIO_R & 0x02) == 0);
+	
+	GPIO_PORTB_DIR_R |= 0x08;
+	GPIO_PORTB_DEN_R |= 0x08;
+	GPIO_PORTB_AFSEL_R &= ~0x08;
+	GPIO_PORTB_AMSEL_R &= ~0x08;
+}

@@ -20,6 +20,7 @@ void ADC_Init(void);
 void PORTPB6_Init(void);
 void servoDeg1(int);
 void servoDeg2(int);
+void servoDeg3(int);
 int joystick_to_deg(int);
 void Delay_ms(uint32_t delay);
 uint32_t ADC0_In(void);
@@ -48,12 +49,15 @@ int main(void) {
 	UARTprintf("PB6 Init complete.\n");
 	PORTPB7_Init();
 	UARTprintf("PC7 Init complete.\n");
+	PORTPD0_Init();
+	UARTprintf("PD0 Init complete.\n");
 	
 	while (1) {
 		UARTprintf("raw adc val: %d\n",ADC0_In());
 
 		int angle1 = joystick_to_deg(ADC0_In());
 		servoDeg1(angle1);
+		servoDeg3(angle1);
 		
 		int angle2 = joystick_to_deg(ADC1_In());
 		servoDeg2(angle2);
@@ -77,12 +81,22 @@ void servoDeg1(int deg) {
 			Delay_us(20000-i);
 }
 
-//takes in an intiger degree angle and sets the servo to that angle for port PC7
+//takes in an intiger degree angle and sets the servo to that angle for port PB7
 void servoDeg2(int deg) {
 			int i = (2000/180)*deg + 500;
 		
 			GPIO_PORTB_DATA_R |= 0x80;
 			Delay_us(i);
 			GPIO_PORTB_DATA_R &= ~0x80;
+			Delay_us(20000-i);
+}
+
+//takes in an intiger degree angle and sets the servo to that angle for port PD0
+void servoDeg3(int deg) {
+			deg = 180 - deg;
+			int i = (2000/180)*deg + 500;
+			GPIO_PORTB_DATA_R |= 0x08;
+			Delay_us(i);
+			GPIO_PORTB_DATA_R &= ~0x08;
 			Delay_us(20000-i);
 }
