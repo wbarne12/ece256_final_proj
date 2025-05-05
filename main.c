@@ -18,6 +18,7 @@ void Delay_1ms(void);
 void InitConsole(void);
 void ADC_Init(void);
 void PORTPB6_Init(void);
+void servoDeg(int);
 void Delay_ms(uint32_t delay);
 uint32_t ADC0_In(void);
 uint32_t ADC1_In(void);
@@ -45,17 +46,20 @@ int main(void) {
 	UARTprintf("PB6 Init complete.\n");
 	
 	while (1) {
-		for (int i = 500; i < 2500; i+=20) {
-			GPIO_PORTB_DATA_R |= 0x40;
-			Delay_us(i);
-			GPIO_PORTB_DATA_R &= ~0x40;
-			Delay_us(20000-i);
+		for (int i = 0; i < 180; i++) {
+			servoDeg(i);
 		}
-		for (int i = 2500; i > 500; i-=20) {
-			GPIO_PORTB_DATA_R |= 0x40;
-			Delay_us(i);
-			GPIO_PORTB_DATA_R &= ~0x40;
-			Delay_us(20000-i);
+		for (int i = 180; i > 0; i--) {
+			servoDeg(i);
 		}
 	} 
+}
+
+void servoDeg(int deg) {
+			int i = (2000/180)*deg + 500;
+		
+			GPIO_PORTB_DATA_R |= 0x40;
+			Delay_us(i);
+			GPIO_PORTB_DATA_R &= ~0x40;
+			Delay_us(20000-i);
 }

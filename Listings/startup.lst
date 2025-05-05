@@ -1090,9 +1090,11 @@ ARM Macro Assembler    Page 17
               00000400 
               00000000 
 Command Line: --debug --xref --diag_suppress=9931,A1950W --cpu=Cortex-M4 --fpu=
-SoftVFP --depend=.\objects\startup.d -o.\objects\startup.o -IDevice\ARM\ARMCM4\
-Include --predefine="__EVAL SETA 1" --predefine="__UVISION_VERSION SETA 541" --
-list=.\listings\startup.lst startup.s
+SoftVFP --depend=.\objects\startup.d -o.\objects\startup.o -IC:\Keil_v5\ARM\Pac
+ks\ARM\Cortex_DFP\1.1.0\Device\ARMCM4\Include -IC:\Keil_v5\ARM\Packs\ARM\Cortex
+_DFP\1.1.0\Device\ARM\ARMCM4\Include --predefine="__EVAL SETA 1" --predefine="_
+_UVISION_VERSION SETA 541" --predefine="ARMCM4 SETA 1" --list=.\listings\startu
+p.lst startup.s
 
 
 
@@ -2539,4 +2541,4 @@ Symbol: __use_two_region_memory
       None
 Comment: __use_two_region_memory unused
 2 symbols
-481 symbols in table
+482 symbols in table
