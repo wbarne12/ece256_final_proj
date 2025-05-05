@@ -68,3 +68,14 @@ uint32_t ADC1_In(void) {
 		
 	return v;	
 }
+
+// Output PB6 for servo
+void PORTPB6_Init(void) {
+	SYSCTL_RCGCGPIO_R |= 0x02;
+	while ((SYSCTL_RCGCGPIO_R & 0x02) == 0);
+	
+	GPIO_PORTB_DIR_R |= 0x40;
+	GPIO_PORTB_DEN_R |= 0x40;
+	GPIO_PORTB_AFSEL_R &= ~0x40;
+	GPIO_PORTB_AMSEL_R &= ~0x40;
+}

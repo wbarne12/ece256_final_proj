@@ -17,6 +17,7 @@ void SysTick_Init(void);
 void Delay_1ms(void);
 void InitConsole(void);
 void ADC_Init(void);
+void PORTPB6_Init(void);
 void Delay_ms(uint32_t delay);
 uint32_t ADC0_In(void);
 uint32_t ADC1_In(void);
@@ -39,15 +40,22 @@ int main(void) {
 	SysTick_Init();
 	UARTprintf("Systick init complete.\n");
 	ADC_Init();
-	UARTprintf("ADC init complete\n");
-	UARTprintf("All inits complete, ready to go!\n");
+	UARTprintf("ADC init complete.\n");
+	PORTPB6_Init();
+	UARTprintf("PB6 Init complete.\n");
 	
 	while (1) {
-		UARTprintf("Input x ADC0: %d\n", rawADC_to_us(ADC0_In()));
-		UARTprintf("Input y ADC1: %d\n", rawADC_to_us(ADC1_In()));
-		// 1 second delay
-		for (int i = 0; i < 100; i++) {
-			Delay_ms(10);
+		for (int i = 500; i < 2500; i+=20) {
+			GPIO_PORTB_DATA_R |= 0x40;
+			Delay_us(i);
+			GPIO_PORTB_DATA_R &= ~0x40;
+			Delay_us(20000-i);
+		}
+		for (int i = 2500; i > 500; i-=20) {
+			GPIO_PORTB_DATA_R |= 0x40;
+			Delay_us(i);
+			GPIO_PORTB_DATA_R &= ~0x40;
+			Delay_us(20000-i);
 		}
 	} 
 }
