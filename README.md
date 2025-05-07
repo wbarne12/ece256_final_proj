@@ -15,6 +15,3 @@ input from the ADC, and translate it to a certain degree and control the servos 
 Using Systick we create delays and togle the signal going to the servo on and off to create our pwm signals. This is a bit messy,
 but it works for a small number of servos. Scalling this project would require use of the PWM pins and the PWM functions but this is easier
 for quick applicaiton.
-
-If you are using the computer to enter movements, then the microcontroller will use UART. The input will be a certain number of degrees to move.
-That degree will also get translated into a certain amount of time. From there, it will act the same as the joystick input. 
