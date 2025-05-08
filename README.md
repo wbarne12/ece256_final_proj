@@ -14,3 +14,6 @@ internally process the inputs.
 Using Systick we create delays and togle the signal going to the servo on and off to create our pwm signals. This is a bit messy,
 but it works for a small number of servos. Scalling this project would require use of the PWM pins and the PWM functions but this is easier
 for quick applicaiton.
+
+## How to build project
+This project was designed in Keil U-vision, so all compliation should take place on that environment. The code is designed to run on the Tiva C EK-TM4C123GXL board. 
